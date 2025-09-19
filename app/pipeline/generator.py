@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import os
 from typing import List, Tuple
 
 from app.models import Brief, Product
 from .adapters.base import BaseProvider
 from .adapters.mock import MockProvider
+from .adapters.firefly import FireflyProvider
+from .adapters.openai_images import OpenAIImagesProvider
 
 
 def select_provider(name: str) -> BaseProvider:
@@ -12,8 +15,11 @@ def select_provider(name: str) -> BaseProvider:
 
     candidates: List[BaseProvider]
     # Placeholders for future: Firefly, OpenAI
-    firefly_provider: BaseProvider | None = None
-    openai_provider: BaseProvider | None = None
+    firefly_key = os.getenv("FIREFLY_API_KEY")
+    firefly_ws = os.getenv("FIREFLY_WORKSPACE_ID")
+    openai_key = os.getenv("OPENAI_API_KEY")
+    firefly_provider: BaseProvider | None = FireflyProvider(firefly_key, firefly_ws) if firefly_key else None
+    openai_provider: BaseProvider | None = OpenAIImagesProvider(openai_key) if openai_key else None
     mock_provider = MockProvider()
 
     if name == "firefly":
