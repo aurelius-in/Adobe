@@ -166,10 +166,10 @@ runs/<timestamp>/
 ```mermaid
 flowchart LR
   IN[Brief + Assets]
-  GEN[Provider Adapter\n(Firefly preferred)]
-  CMP[Compositor\nresize/crop/overlay]
+  GEN[Provider Adapter<br/>Firefly-preferred]
+  CMP[Compositor<br/>resize/crop/overlay]
   CHK[Brand + Legal Checks]
-  RPT[Run Report\nJSON+CSV]
+  RPT[Run Report<br/>JSON+CSV]
   OUT[(outputs/)]
 
   IN --> GEN --> CMP --> CHK --> RPT
@@ -177,13 +177,14 @@ flowchart LR
   RPT --> OUT
 
   subgraph Agents
-    ORCH[Orchestrator\nwatch briefs/]
+    ORCH[Orchestrator<br/>watch briefs/]
     MCP[MCP Alert Drafter]
   end
 
   ORCH --> IN
   ORCH --> RPT
   ORCH --> MCP
+
 ```
 
 ---
