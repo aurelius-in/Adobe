@@ -1,0 +1,15 @@
+brand:
+  name: "Acme Beverages"
+  logo_path: "assets/logos/brand_logo.png"
+  logo_area_pct_min: 3
+  logo_area_pct_max: 6
+  primary_hex: "#FF3A2E"
+  secondary_hex: "#111111"
+  hsv_tolerance: {h: 10, s: 35, v: 35}
+overlay:
+  text_font: "assets/fonts/NotoSans-Regular.ttf"
+  min_contrast_ratio: 4.5
+legal:
+  disclaimers_required: false
+
+

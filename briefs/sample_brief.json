@@ -1,0 +1,32 @@
+{
+  "campaign_id": "fall-refresh-2025",
+  "brand": "Acme Beverages",
+  "markets": ["US", "MX"],
+  "audience": "Busy professionals seeking low-sugar hydration",
+  "locales": ["en-US", "es-MX"],
+  "aspect_ratios": ["1:1", "9:16", "16:9"],
+  "message": {
+    "en-US": "Hydrate smarter. Zero sugar. Big flavor.",
+    "es-MX": "Hidrátate mejor. Cero azúcar. Gran sabor."
+  },
+  "call_to_action": {
+    "en-US": "Shop now",
+    "es-MX": "Compra ahora"
+  },
+  "brand_palette": { "primary_hex": "#FF3A2E", "secondary_hex": "#111111" },
+  "products": [
+    {
+      "id": "spark-orange",
+      "name": "Spark Orange",
+      "prompt_hints": "vibrant citrus splash, condensation droplets, energy, lifestyle light bokeh",
+      "base_asset": "assets/source/spark_orange.png"
+    },
+    {
+      "id": "cool-lime",
+      "name": "Cool Lime",
+      "prompt_hints": "cool lime zest, crushed ice, refreshing, minimal studio background"
+    }
+  ]
+}
+
+
