@@ -1,0 +1,33 @@
+# Architecture and roadmap
+
+## High-level architecture
+```mermaid
+flowchart TD
+  A[Brief (JSON/YAML)] --> B[Ingest]\n<br/>
+  B --> C[Generator]\n<br/>
+  C -->|Auto-select| P{{Providers}}\n<br/>
+  P --> C1[Firefly v3]\n<br/>
+  P --> C2[OpenAI Images]\n<br/>
+  P --> C3[Mock]\n<br/>
+  C --> D[Compositor]\n<br/>
+  D --> E[Compliance]\n<br/>
+  B --> F[Legal]\n<br/>
+  E --> G[Report]\n<br/>
+  F --> G\n<br/>
+  O[Orchestrator] --> B\n<br/>
+  O --> G
+```
+
+- Ingest parses brief, validates models, loads brand rules and legal lists
+- Generator assembles prompts and calls provider adapter
+- Compositor sizes hero, adds overlays, places logo, ensures contrast
+- Compliance measures brand adherence and assigns a score
+- Legal scans text for disallowed phrases
+- Report produces JSON/CSV, thumbnails, and provenance sidecars
+- Orchestrator watches `briefs/`, triggers pipeline, maintains `status.json`
+
+## Roadmap
+- Week 0–1: MVP local pipeline with Mock provider; CLI; tests; reports
+- Week 2–3: Firefly v3 adapter; brand/legal checks refinements; UI polish
+- Week 4: Agentic orchestrator + MCP context and email rendering
+- Week 5+: Cloud storage adapters; A/B loop; performance optimizations
