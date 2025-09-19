@@ -73,6 +73,21 @@ def generate(
         reporter.save(run_dir)
 
 
+@app.command()
+def orchestrate(
+    briefs_dir: Path = typer.Option(Path("briefs")),
+    poll_seconds: int = typer.Option(15),
+    out: Path = typer.Option(Path("outputs")),
+    iterations: int = typer.Option(1, help="Loop iterations before exit (for local runs)"),
+):
+    """Run the agentic orchestrator to watch briefs and trigger the pipeline."""
+    from app.agents.orchestrator import Orchestrator, OrchestratorConfig
+
+    cfg = OrchestratorConfig(briefs_dir=briefs_dir, poll_seconds=poll_seconds, output_dir=out)
+    orch = Orchestrator(cfg)
+    orch.start(max_iterations=iterations)
+
+
 def main() -> None:
     app()
 
