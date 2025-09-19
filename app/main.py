@@ -41,6 +41,10 @@ def generate(
     from app.pipeline.legal import scan_legal
     from app.pipeline.compliance import score_compliance
 
+    from app.logging_config import configure_logging
+
+    configure_logging(json_logs=log_json)
+
     ratios_list = [r.strip() for r in ratios.split(",") if r.strip()]
     locales_list = [l.strip() for l in locales.split(",") if l.strip()]
 
