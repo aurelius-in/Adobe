@@ -79,12 +79,18 @@ def _draw_text_block(
 
     # Sample background under text area to estimate contrast
     crop = canvas.crop((x, y, min(canvas.width - padding, x + text_w + 16), y + text_h + 16)).convert("RGB")
-    avg = tuple(int(sum(channel) / len(channel)) for channel in zip(*list(crop.getdata())))
-    text_color = (255, 255, 255)
-    ratio = _contrast_ratio(text_color, avg)
-    if ratio < min_contrast:
-        # Draw translucent dark backdrop to lift contrast
+    pixels = list(crop.getdata()) or [(0, 0, 0)]
+    avg = tuple(int(sum(channel) / len(channel)) for channel in zip(*pixels))
+    white = (255, 255, 255)
+    black = (0, 0, 0)
+    white_ratio = _contrast_ratio(white, avg)
+    black_ratio = _contrast_ratio(black, avg)
+    text_color = white if white_ratio >= black_ratio else black
+    best_ratio = max(white_ratio, black_ratio)
+    if best_ratio < min_contrast:
+        # Draw translucent dark backdrop to lift contrast and use white text
         draw.rectangle((x - 12, y - 12, x + text_w + 24, y + text_h + 24), fill=(0, 0, 0, 180))
+        text_color = white
     # Draw lines
     line_y = y
     for line in text_lines:
@@ -139,6 +145,7 @@ def compose_variants(
                     ]
                     _draw_text_block(post, lines, font, min_contrast=min_contrast)
 
+                    logo_area_pct_calc = None
                     if logo_img is not None:
                         area_pct = (brand_rules.get("brand", {}).get("logo_area_pct_min", 3)
                                     + brand_rules.get("brand", {}).get("logo_area_pct_max", 6)) / 2
@@ -146,6 +153,7 @@ def compose_variants(
                         logo_rs = logo_img.resize((lw, lh), Image.LANCZOS)
                         margin = max(16, min(size) // 40)
                         post.alpha_composite(logo_rs, dest=(size[0] - lw - margin, size[1] - lh - margin))
+                        logo_area_pct_calc = (lw * lh) / (size[0] * size[1]) * 100.0
 
                     # Save files
                     base = out_dir / brief.campaign_id / product.id / ratio
@@ -161,6 +169,7 @@ def compose_variants(
                         "product_id": product.id,
                         "ratio": ratio,
                         "locale": loc,
+                        "logo_area_pct": logo_area_pct_calc,
                     }
                     write_json(Path(str(post_path) + ".prov.json"), prov)
 
