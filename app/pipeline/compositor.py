@@ -68,6 +68,7 @@ def _draw_text_block(
     padding: int = 32,
 ) -> None:
     draw = ImageDraw.Draw(canvas, "RGBA")
+    # yep this is a bit naive but gets decent placements without getting fancy
     # Measure text block
     widths: List[int] = []
     heights: List[int] = []
@@ -143,6 +144,7 @@ def compose_variants(
 
                     # Compose post by adding overlays and logo
                     post = hero.copy().convert("RGBA")
+                    # TODO: support overlay_style "bottom-strip" and "center-card" with simple shapes
                     lines = [
                         brief.message.get(loc) or next(iter(brief.message.values())),
                         f"{brief.call_to_action.get(loc) or next(iter(brief.call_to_action.values()))}",

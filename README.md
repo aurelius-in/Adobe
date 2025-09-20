@@ -1,36 +1,29 @@
 creative-automation-pipeline
 ============================
 
-Firefly‑first creative automation pipeline that turns a campaign brief into on‑brand social creatives across multiple aspect ratios, with provider auto‑selection, brand/legal checks, provenance, reports, a CLI, and an optional Streamlit UI. Ships with a Mock provider so it runs locally without any API keys.
+One-line: Generate social creatives from a brief. Uses a local Mock provider by default.
 
-Features
---------
-- Firefly‑first with graceful fallbacks: Firefly v3 → OpenAI Images → Mock
-- Agentic Orchestrator watches `briefs/` and triggers generation, tracking coverage
-- Deterministic Mock provider for offline/local runs
-- On‑brand composition: safe margins, auto line‑wrap, logo scaling 3–6% area
-- WCAG AA text contrast check (≥ 4.5:1) and simple color coverage
-- Legal scan against prohibited terms
-- Provenance sidecars per asset + JSON/CSV reports
-- Clean Typer CLI and Streamlit UI (dark theme)
-- Tests, pre‑commit, ruff+black, and CI
+Why
+---
+This pipeline turns a campaign brief into on-brand assets across common ratios. It picks a provider that works in your env. It writes simple reports so you can check what happened.
 
 Quick start
 -----------
-1) Requirements: Python 3.11
+1) Python 3.11.
 
 2) Setup
 ```bash
 make setup
 ```
 
-3) Run sample (offline via Mock)
+3) Run sample (no API keys)
 ```bash
 make run-sample
 ```
 
-Typer CLI
----------
+CLI
+---
+Run with auto provider:
 ```bash
 python -m app.main generate \
   --brief briefs/sample_brief.json \
@@ -44,29 +37,34 @@ python -m app.main generate \
   --log-json
 ```
 
+Run with Mock explicitly:
+```bash
+python -m app.main generate --brief briefs/sample_brief.json --provider mock
+```
+
 Orchestrator
 ------------
 ```bash
 python -m app.main orchestrate --iterations 1
 ```
 
-Streamlit UI (optional)
------------------------
+UI (optional)
+-------------
 ```bash
 streamlit run app/ui.py
 ```
 
 Providers
 ---------
-- FireflyProvider (preferred): Adobe Firefly Services API v3
-- OpenAIImagesProvider (fallback)
-- MockProvider: pure Pillow; deterministic; always available
+- Firefly: preferred when keys are set
+- OpenAI Images: fallback when available
+- Mock: pure Pillow; deterministic; always available
 
-Auto‑selection: `--provider auto` tries Firefly → OpenAI → Mock.
+Auto-select tries Firefly → OpenAI → Mock.
 
-Brief schema (overview)
------------------------
-Required fields:
+Brief schema (short)
+--------------------
+Required:
 - campaign_id, brand, markets, audience
 - locales, aspect_ratios
 - message[locale], call_to_action[locale]
@@ -75,25 +73,19 @@ Required fields:
 
 See `briefs/sample_brief.json` for a full example.
 
-Composition rules
------------------
-- Ratios: 1:1 (1024×1024), 9:16 (1080×1920), 16:9 (1920×1080)
-- Fit hero with cover/contain without distortion; smart padding when needed
-- Overlay message+CTA using bundled font; auto line‑wrap; safe margins
-- Logo bottom‑right with margin; scaled to 3–6% of canvas area
-- Text contrast meets WCAG AA ≥ 4.5:1
-- Provenance sidecar `{image}.prov.json`
-
-Brand & legal checks
---------------------
-- Brand rules via `brand/brand_rules.yaml`
-- Compliance scoring 0–100 with reasons
-- Legal scan from `legal/prohibited_words.txt` (case‑insensitive)
-
 Outputs
 -------
 - `outputs/<campaign>/<product>/<ratio>/{hero.png, post.png, *.prov.json}`
 - `runs/<timestamp>/{run.log,report.json,report.csv}`
+
+Composition
+-----------
+- Ratios: 1:1 (1024×1024), 9:16 (1080×1920), 16:9 (1920×1080)
+- Fit hero with cover/contain without distortion; add padding when needed
+- Overlay message + CTA with bundled font; line-wrap; safe margins
+- Logo bottom-right with margin; target 3–6% canvas area
+- Text contrast aims for WCAG AA ≥ 4.5:1
+- Provenance sidecar `{image}.prov.json`
 
 Architecture
 ------------
@@ -116,32 +108,6 @@ flowchart LR
     Orchestrator --> Report
 ```
 
-Project layout
---------------
-```
-creative-automation-pipeline/
-  README.md
-  LICENSE
-  .env.example
-  requirements.txt
-  Makefile
-  .pre-commit-config.yaml
-  .github/workflows/ci.yml
-  briefs/sample_brief.json
-  brand/brand_rules.yaml
-  legal/prohibited_words.txt
-  assets/
-    source/.gitkeep
-    logos/brand_logo.png
-    fonts/NotoSans-Regular.ttf
-  outputs/.gitkeep
-  runs/.gitkeep
-  app/
-    ...
-  tests/
-    ...
-```
-
 Make targets
 ------------
 - setup: venv + install + bootstrap assets (logo/font if missing)
@@ -152,13 +118,14 @@ Make targets
 
 Environment
 -----------
-Copy `.env.example` to `.env` and set keys as needed. The app runs without keys using the Mock provider.
+Copy `.env.example` to `.env` and set keys if you want external providers. The app runs without keys using Mock.
 
-Assumptions & notes
--------------------
+Assumptions
+-----------
 - If the bundled font or placeholder logo is missing, `make setup` bootstraps them.
-- Firefly and OpenAI adapters gracefully degrade when keys/quotas are unavailable.
+- Firefly and OpenAI adapters degrade sanely when keys/quotas are unavailable.
 
-Screenshots and report snippet
-------------------------------
-See the `docs/` folder for architecture and agent communications. You can add screenshots of generated variants and a report snippet after your first run.
+Screenshots
+-----------
+Drop a few outputs in `docs/screens/*.png` after a run and link them here later. (yep, TODO but not a blocker)
+
