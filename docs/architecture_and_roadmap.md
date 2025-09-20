@@ -3,18 +3,18 @@
 ## High-level architecture
 ```mermaid
 flowchart TD
-  A[Brief (JSON/YAML)] --> B[Ingest]\n<br/>
-  B --> C[Generator]\n<br/>
-  C -->|Auto-select| P{{Providers}}\n<br/>
-  P --> C1[Firefly v3]\n<br/>
-  P --> C2[OpenAI Images]\n<br/>
-  P --> C3[Mock]\n<br/>
-  C --> D[Compositor]\n<br/>
-  D --> E[Compliance]\n<br/>
-  B --> F[Legal]\n<br/>
-  E --> G[Report]\n<br/>
-  F --> G\n<br/>
-  O[Orchestrator] --> B\n<br/>
+  A[Brief (JSON/YAML)] --> B[Ingest]<br/>
+  B --> C[Generator]<br/>
+  C -->|Auto-select| P{{Providers}}<br/>
+  P --> C1[Firefly v3]<br/>
+  P --> C2[OpenAI Images]<br/>
+  P --> C3[Mock]<br/>
+  C --> D[Compositor]<br/>
+  D --> E[Compliance]<br/>
+  B --> F[Legal]<br/>
+  E --> G[Report]<br/>
+  F --> G<br/>
+  O[Orchestrator] --> B<br/>
   O --> G
 ```
 

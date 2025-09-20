@@ -13,19 +13,32 @@ app = typer.Typer(add_completion=False, no_args_is_help=True)
 
 @app.command()
 def generate(
-    brief: Path = typer.Option(..., exists=True, readable=True, help="Path to brief JSON/YAML"),
-    out: Path = typer.Option(Path("outputs"), help="Output directory"),
+    brief: Path = typer.Option(
+        ..., "--brief", "-b", exists=True, readable=True, help="Path to brief JSON/YAML"
+    ),
+    out: Path = typer.Option(Path("outputs"), "--out", "-o", help="Output directory"),
     provider: str = typer.Option(
         "auto",
+        "--provider",
+        "-p",
         help="Provider: auto|firefly|openai|mock",
         case_sensitive=False,
     ),
-    ratios: str = typer.Option("1:1,9:16,16:9", help="Comma-separated aspect ratios"),
-    locales: str = typer.Option("en-US", help="Comma-separated locales"),
-    max_variants: int = typer.Option(2, min=1),
-    seed: Optional[int] = typer.Option(None),
-    overlay_style: str = typer.Option("banner"),
-    log_json: bool = typer.Option(False, help="Emit JSON logs to runs/<ts>/run.log"),
+    ratios: str = typer.Option(
+        "1:1,9:16,16:9", "--ratios", "-r", help="Comma-separated aspect ratios"
+    ),
+    locales: str = typer.Option("en-US", "--locales", "-l", help="Comma-separated locales"),
+    max_variants: int = typer.Option(2, "--max-variants", "-n", min=1),
+    seed: Optional[int] = typer.Option(None, "--seed", "-s"),
+    overlay_style: str = typer.Option(
+        "banner",
+        "--overlay-style",
+        "-y",
+        help="Overlay style: banner | bottom-strip | center-card (use banner for 1:1, strip for 16:9, card for busy bgs)",
+    ),
+    log_json: bool = typer.Option(
+        False, "--log-json", "-j", help="Write JSON logs to runs/<ts>/run.log"
+    ),
 ):
     """Generate creatives from a campaign brief.
 
@@ -42,7 +55,6 @@ def generate(
     from app.pipeline.compliance import score_compliance
 
     from app.logging_config import configure_logging
-    from app.pipeline.utils import ensure_run_dirs
 
     ratios_list = [r.strip() for r in ratios.split(",") if r.strip()]
     locales_list = [l.strip() for l in locales.split(",") if l.strip()]
@@ -73,6 +85,19 @@ def generate(
         scan_legal(brief_model, reporter)
         score_compliance(brief_model, brand_rules, reporter)
         reporter.finalize(out)
+        # One-liner summary (humans tend to want this at the end)
+        expected = len(brief_model.products) * len(ratios_list) * len(locales_list) * max_variants
+        actual = len(reporter.variants)
+        avg = reporter.compliance.get("avg", 0)
+        flags = getattr(reporter, "legal_flags", [])
+        flag_note = f" ({flags[0]})" if flags else ""
+        typer.echo(
+            f"Run {run_id}: {actual}/{expected} variants, avg compliance {int(avg)}, legal flags {len(flags)}{flag_note}"
+        )
+    except Exception as exc:
+        # keep errors small and plain; print and exit with code 1
+        typer.secho(f"error: {exc}", fg=typer.colors.RED)
+        raise typer.Exit(1)
     finally:
         reporter.save(run_dir)
 
