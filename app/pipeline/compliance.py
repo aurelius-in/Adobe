@@ -20,6 +20,7 @@ def _hex_to_rgb(hex_str: str) -> Tuple[int, int, int]:
 def _pct_primary_coverage(img: Image.Image, primary_hex: str, tol: Dict[str, float]) -> float:
     # Downscale for speed
     small = img.convert("RGB").resize((min(200, img.width), int(img.height * (min(200, img.width) / img.width))), Image.BILINEAR)
+    # heads-up: HSV buckets are a little blunt — gradients can slip thru
     target_rgb = _hex_to_rgb(primary_hex)
     tr, tg, tb = target_rgb
     th, ts, tv = rgb_to_hsv(tr / 255.0, tg / 255.0, tb / 255.0)

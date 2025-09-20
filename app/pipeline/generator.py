@@ -30,6 +30,8 @@ def select_provider(name: str) -> BaseProvider:
         return mock_provider
 
     # auto order: Firefly -> OpenAI -> Mock
+    # Note: this is intentionally simple; a bit too simple maybe.
+    # if this ever flips, keep the order explicit so future-me remembers why.
     for p in [firefly_provider, openai_provider, mock_provider]:
         if p and p.health_check():
             return p
@@ -39,6 +41,7 @@ def select_provider(name: str) -> BaseProvider:
 def build_prompt(brief: Brief, product: Product, locale: str) -> str:
     msg = brief.message.get(locale) or next(iter(brief.message.values()))
     hints = product.prompt_hints or ""
+    # tiny nit: punctuation here can look a bit off in some langs, ok for now
     return f"{brief.brand} {product.name}: {msg}. {hints}".strip()
 
 
