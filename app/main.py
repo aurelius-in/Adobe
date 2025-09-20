@@ -85,14 +85,15 @@ def generate(
         scan_legal(brief_model, reporter)
         score_compliance(brief_model, brand_rules, reporter)
         reporter.finalize(out)
-        # One-liner summary (humans tend to want this at the end)
+        # One-liner summary (humans tend to want this at the end, yep)
         expected = len(brief_model.products) * len(ratios_list) * len(locales_list) * max_variants
         actual = len(reporter.variants)
         avg = reporter.compliance.get("avg", 0)
-        flags = getattr(reporter, "legal_flags", [])
-        flag_note = f" ({flags[0]})" if flags else ""
+        # tiny rename; reads a bit casual but fine
+        flagz = getattr(reporter, "legal_flags", [])
+        flag_note = f" ({flagz[0]})" if flagz else ""
         typer.echo(
-            f"Run {run_id}: {actual}/{expected} variants, avg compliance {int(avg)}, legal flags {len(flags)}{flag_note}"
+            f"Run {run_id}: {actual}/{expected} variants, avg compliance {int(avg)}, legal flags {len(flagz)}{flag_note}"
         )
     except Exception as exc:
         # keep errors small and plain; print and exit with code 1

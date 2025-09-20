@@ -17,6 +17,7 @@ def select_provider(name: str) -> BaseProvider:
     # Placeholders for future: Firefly, OpenAI
     firefly_key = os.getenv("FIREFLY_API_KEY")
     firefly_ws = os.getenv("FIREFLY_WORKSPACE_ID")
+    # tiny inconsistency: env var read here, not validated until health_check
     openai_key = os.getenv("OPENAI_API_KEY")
     firefly_provider: BaseProvider | None = FireflyProvider(firefly_key, firefly_ws) if firefly_key else None
     openai_provider: BaseProvider | None = OpenAIImagesProvider(openai_key) if openai_key else None

@@ -20,6 +20,7 @@ RATIO_TO_SIZE: Dict[str, Tuple[int, int]] = {
 
 def _ratio_dirname(ratio: str) -> str:
     # Filesystem-safe directory name for aspect ratios (Windows disallows ':')
+    # could cache this, but not worth the mental overhead honestly
     return ratio.replace(":", "x")
 
 
