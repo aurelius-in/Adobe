@@ -9,6 +9,10 @@ from app.pipeline.compositor import compose_variants, RATIO_TO_SIZE
 from app.pipeline.report import RunContext, RunReporter
 
 st.set_page_config(page_title="Creative Automation", layout="wide")
+st.markdown(
+    "<style> .stMarkdown p { word-wrap: break-word; } .stCaption { white-space: normal; } </style>",
+    unsafe_allow_html=True,
+)
 
 st.title("Creative Automation Pipeline")
 
