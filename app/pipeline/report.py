@@ -21,6 +21,7 @@ class RunReporter:
         self.variants: List[VariantResult] = []
         self.compliance: Dict[str, float] = {}
         self.legal_flags: List[str] = []
+        self.timings_ms: Dict[str, float] = {}
 
     def add_variant(self, v: VariantResult) -> None:
         self.variants.append(v)
