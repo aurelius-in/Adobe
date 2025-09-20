@@ -13,10 +13,10 @@ app = typer.Typer(add_completion=False, no_args_is_help=True)
 
 @app.command()
 def generate(
-    brief: Path = typer.Option(
-        ..., "--brief", "-b", exists=True, readable=True, help="Path to brief JSON/YAML"
+    brief: str = typer.Option(
+        ..., "--brief", "-b", help="Path to brief JSON/YAML"
     ),
-    out: Path = typer.Option(Path("outputs"), "--out", "-o", help="Output directory"),
+    out: str = typer.Option("outputs", "--out", "-o", help="Output directory"),
     provider: str = typer.Option(
         "auto",
         "--provider",
@@ -63,7 +63,9 @@ def generate(
     run_dir, log_path = ensure_run_dirs(run_id, json_logs=log_json)
     configure_logging(json_logs=log_json, log_file=log_path)
 
-    brief_model, brand_rules = load_brief_and_rules(brief)
+    brief_path = Path(brief)
+    out_path = Path(out)
+    brief_model, brand_rules = load_brief_and_rules(brief_path)
     provider_impl = select_provider(provider)
 
     reporter = RunReporter(RunContext(run_id=run_id, provider=provider_impl.name))
@@ -74,7 +76,7 @@ def generate(
             provider_impl,
             ratios_list,
             locales_list,
-            out,
+            out_path,
             reporter,
             max_variants=max_variants,
             seed=seed,
@@ -84,7 +86,7 @@ def generate(
         # After generation, run scans and finalize report
         scan_legal(brief_model, reporter)
         score_compliance(brief_model, brand_rules, reporter)
-        reporter.finalize(out)
+        reporter.finalize(out_path)
         # One-liner summary (humans tend to want this at the end, yep)
         expected = len(brief_model.products) * len(ratios_list) * len(locales_list) * max_variants
         actual = len(reporter.variants)
