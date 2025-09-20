@@ -24,7 +24,8 @@ def test_outputs_dimensions(tmp_path):
     )
     for prod in [p.id for p in brief.products]:
         for ratio, (w, h) in RATIO_TO_SIZE.items():
-            post = tmp_path / brief.campaign_id / prod / ratio / "post.png"
+            ratio_dir = ratio.replace(":", "x")
+            post = tmp_path / brief.campaign_id / prod / ratio_dir / "post.png"
             assert post.exists()
             with Image.open(post) as im:
                 assert im.size == (w, h)

@@ -34,7 +34,7 @@ def test_logo_area_within_bounds(tmp_path):
     )
     # Read provenance sidecar
     prod_id = brief.products[0].id
-    prov_path = tmp_path / brief.campaign_id / prod_id / "1:1" / "post.png.prov.json"
+    prov_path = tmp_path / brief.campaign_id / prod_id / "1x1" / "post.png.prov.json"
     assert prov_path.exists()
     import json
 

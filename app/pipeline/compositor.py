@@ -18,6 +18,10 @@ RATIO_TO_SIZE: Dict[str, Tuple[int, int]] = {
     "16:9": (1920, 1080),
 }
 
+def _ratio_dirname(ratio: str) -> str:
+    # Filesystem-safe directory name for aspect ratios (Windows disallows ':')
+    return ratio.replace(":", "x")
+
 
 def _relative_luminance(rgb: Tuple[int, int, int]) -> float:
     # sRGB to relative luminance
@@ -156,7 +160,7 @@ def compose_variants(
                         logo_area_pct_calc = (lw * lh) / (size[0] * size[1]) * 100.0
 
                     # Save files
-                    base = out_dir / brief.campaign_id / product.id / ratio
+                    base = out_dir / brief.campaign_id / product.id / _ratio_dirname(ratio)
                     base.mkdir(parents=True, exist_ok=True)
                     hero_path = base / "hero.png"
                     post_path = base / "post.png"
