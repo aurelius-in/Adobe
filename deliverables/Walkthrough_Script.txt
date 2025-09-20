@@ -1,0 +1,26 @@
+Creative Automation — 5–7 min walkthrough (plain talk)
+
+1) What it is (15s)
+   It takes a short brief and turns it into ready‑to‑post social images (square, tall, wide). Keeps them on‑brand and gives a tiny report.
+
+2) Local run (60–90s)
+   - make setup
+   - make run-sample   # uses Mock provider so it works on any laptop
+   - Show outputs/<campaign>/<product>/<ratio> and runs/<ts>/report.json
+
+3) Firefly path (30s)
+   - With keys in .env, use --provider auto. It’ll try Firefly first, otherwise fall back.
+   - The point is reviewers can run it either way.
+
+4) Brand & legal checks (45s)
+   - Logo is on and ~3–6% of the canvas; brand color shows up; text meets 4.5:1 contrast.
+   - We also flag if certain words pop up (“guarantee”, etc.). These don’t block output.
+
+5) Agentic piece (45s)
+   - The orchestrator watches /briefs, kicks off a run, and keeps count. If we’re missing variants, it raises a hand and drafts a short update.
+
+6) What’s next (20s)
+   - Cloud storage, per‑channel spec packs, and a real approval step. Keep it simple today; don’t boil the ocean.
+
+7) Close (10s)
+   - Everything you need is in the repo + this folder. Happy to rerun with your brand assets.

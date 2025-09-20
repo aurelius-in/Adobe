@@ -1,0 +1,20 @@
+Subject: Status — Fall Refresh variants; small blocker on API provisioning
+
+Hi <FirstName>,
+
+Quick status on **Fall Refresh** (US, MX):
+- Generated **14/18** planned variants across 1:1, 9:16, 16:9.
+- Missing **4** (9:16) for *Cool Lime* due to GenAI API quota still in provisioning.
+
+What we’re doing
+- Queued retries and a lighter layout that reuses the existing hero so Ad Ops isn’t stuck.
+- Rerun will auto‑resume once the quota is raised.
+
+What we need
+- **IT:** confirm Firefly API quota + workspace access for the service account.
+- **Creative:** thumbs‑up on the alternate 9:16 layout if the quota slips past today.
+
+Next update in ~30 minutes or sooner if we’re unblocked. The run report (counts, flags, thumbnails) lives in the shared folder.
+
+Thanks,  
+Oliver
