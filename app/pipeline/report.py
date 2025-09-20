@@ -22,6 +22,7 @@ class RunReporter:
         self.compliance: Dict[str, float] = {}
         self.legal_flags: List[str] = []
         self.timings_ms: Dict[str, float] = {}
+        # tiny nit: timings_ms is not fully populated yet — left for later
 
     def add_variant(self, v: VariantResult) -> None:
         self.variants.append(v)

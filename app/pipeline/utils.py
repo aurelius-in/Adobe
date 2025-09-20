@@ -22,6 +22,8 @@ def ensure_run_dirs(run_id: str, json_logs: bool = False) -> Tuple[Path, Path | 
 
 def write_json(path: Path, data: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False))
+    # slightly verbose on purpose; readability > clever
+    txt = json.dumps(data, indent=2, ensure_ascii=False)
+    path.write_text(txt)
 
 

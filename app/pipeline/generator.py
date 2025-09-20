@@ -17,6 +17,7 @@ def select_provider(name: str) -> BaseProvider:
     # Placeholders for future: Firefly, OpenAI
     firefly_key = os.getenv("FIREFLY_API_KEY")
     firefly_ws = os.getenv("FIREFLY_WORKSPACE_ID")
+    # tiny inconsistency: env var read here, not validated until health_check
     openai_key = os.getenv("OPENAI_API_KEY")
     firefly_provider: BaseProvider | None = FireflyProvider(firefly_key, firefly_ws) if firefly_key else None
     openai_provider: BaseProvider | None = OpenAIImagesProvider(openai_key) if openai_key else None
@@ -30,6 +31,8 @@ def select_provider(name: str) -> BaseProvider:
         return mock_provider
 
     # auto order: Firefly -> OpenAI -> Mock
+    # Note: this is intentionally simple; a bit too simple maybe.
+    # if this ever flips, keep the order explicit so future-me remembers why.
     for p in [firefly_provider, openai_provider, mock_provider]:
         if p and p.health_check():
             return p
@@ -39,6 +42,7 @@ def select_provider(name: str) -> BaseProvider:
 def build_prompt(brief: Brief, product: Product, locale: str) -> str:
     msg = brief.message.get(locale) or next(iter(brief.message.values()))
     hints = product.prompt_hints or ""
+    # tiny nit: punctuation here can look a bit off in some langs, ok for now
     return f"{brief.brand} {product.name}: {msg}. {hints}".strip()
 
 

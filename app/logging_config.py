@@ -24,6 +24,7 @@ def configure_logging(json_logs: bool = False, level: str = "INFO", log_file: Op
     if json_logs:
         processors.append(structlog.processors.JSONRenderer())
     else:
+        # Console renderer is handy for local runs; JSON goes to files when enabled
         processors.append(structlog.dev.ConsoleRenderer())
     structlog.configure(
         processors=processors,
