@@ -26,6 +26,59 @@ flowchart TD
 - Report produces JSON/CSV, thumbnails, and provenance sidecars
 - Orchestrator watches `briefs/`, triggers pipeline, maintains `status.json`
 
+## Sequence (generate path)
+```mermaid
+sequenceDiagram
+  participant CLI
+  participant Ingest
+  participant Generator
+  participant Provider
+  participant Compositor
+  participant Report
+  CLI->>Ingest: load_brief_and_rules()
+  Ingest-->>CLI: Brief, BrandRules
+  CLI->>Generator: select_provider(auto)
+  Generator-->>CLI: Provider (firefly|openai|mock)
+  loop products × ratios × locales
+    CLI->>Generator: build_prompt()
+    CLI->>Provider: generate_image(prompt,size,seed)
+    Provider-->>CLI: hero image+metadata
+    CLI->>Compositor: overlay text + logo, ensure contrast
+    Compositor-->>CLI: post image
+    CLI->>Report: add_variant + provenance
+  end
+  CLI->>Report: finalize + save
+```
+
+## Components
+```mermaid
+flowchart LR
+  subgraph App
+    CLI[Typer CLI]
+    UI[Streamlit UI]
+    Agents[Orchestrator]
+  end
+  subgraph Pipeline
+    Ingest
+    Generator
+    Compositor
+    Compliance
+    Legal
+    Report
+  end
+  subgraph Providers
+    Firefly
+    OpenAI
+    Mock
+  end
+  CLI --> Ingest
+  UI --> Ingest
+  Agents --> Ingest
+  Ingest --> Generator --> Providers
+  Generator --> Compositor --> Compliance --> Report
+  Ingest --> Legal --> Report
+```
+
 ## Roadmap
 - Week 0–1: MVP local pipeline with Mock provider; CLI; tests; reports
 - Week 2–3: Firefly v3 adapter; brand/legal checks refinements; UI polish

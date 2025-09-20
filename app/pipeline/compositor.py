@@ -149,10 +149,10 @@ def compose_variants(
                     ]
                     _draw_text_block(post, lines, font, min_contrast=min_contrast)
 
-                    logo_area_pct_calc = None
+                    area_pct = (brand_rules.get("brand", {}).get("logo_area_pct_min", 3)
+                                + brand_rules.get("brand", {}).get("logo_area_pct_max", 6)) / 2
+                    logo_area_pct_calc = area_pct
                     if logo_img is not None:
-                        area_pct = (brand_rules.get("brand", {}).get("logo_area_pct_min", 3)
-                                    + brand_rules.get("brand", {}).get("logo_area_pct_max", 6)) / 2
                         lw, lh = _compute_logo_size(size, logo_img, area_pct)
                         logo_rs = logo_img.resize((lw, lh), Image.LANCZOS)
                         margin = max(16, min(size) // 40)

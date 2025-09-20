@@ -42,14 +42,14 @@ def generate(
     from app.pipeline.compliance import score_compliance
 
     from app.logging_config import configure_logging
-
-    configure_logging(json_logs=log_json)
+    from app.pipeline.utils import ensure_run_dirs
 
     ratios_list = [r.strip() for r in ratios.split(",") if r.strip()]
     locales_list = [l.strip() for l in locales.split(",") if l.strip()]
 
     run_id = now_ts()
     run_dir, log_path = ensure_run_dirs(run_id, json_logs=log_json)
+    configure_logging(json_logs=log_json, log_file=log_path)
 
     brief_model, brand_rules = load_brief_and_rules(brief)
     provider_impl = select_provider(provider)
