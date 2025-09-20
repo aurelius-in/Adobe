@@ -8,10 +8,10 @@
 - Agentic system design + sample stakeholder note (PDF)
 - One‑slide roadmap (PDF)
 - Architecture (PDF)
-- Walkthrough script (TXT, 5–7 min)
-- Stakeholder email (TXT, editable)
-- KNOWN_ISSUES.md (plain english)
-- CHANGELOG.md (short, human)
-- ADRs (3 short notes): provider abstraction; ratios/compositor; compliance scope
-- .env.example (documented)
-- pre‑commit + CI (basic)
+- Walkthrough script (TXT)
+- Stakeholder email (TXT)
+- KNOWN_ISSUES.md 
+- CHANGELOG.md 
+- ADRs: provider abstraction; ratios/compositor; compliance scope
+- .env.example 
+- pre‑commit + CI
