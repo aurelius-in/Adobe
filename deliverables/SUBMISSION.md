@@ -1,4 +1,4 @@
-# Submission — Creative Automation for Social Campaigns 
+# Creative Automation for Social Campaigns 
 
 **Author:** Oliver A. Ellison 
 **Note:** This is a practical PoC. It runs locally w/ Mock provider; prefers Firefly when keys are set.
