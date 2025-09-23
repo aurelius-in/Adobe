@@ -90,41 +90,35 @@ Composition
 Architecture
 ------------
 ```mermaid
-flowchart LR
-  %% -------- Nodes --------
+flowchart TB
+  %% ------- Main flow (top -> bottom) -------
   Briefs[briefs/*.json<br/>UTF-8 no-BOM]
   Ingest[Ingest<br/>schema validate]
-  Orchestrator[Orchestrator]
   Generator[Generator<br/>provider adapter]
   Compositor[Compositor<br/>ratios 1:1, 9:16, 16:9<br/>overlay-style]
   Compliance[Brand checks<br/>logo area %, palette<br/>contrast ≥ 4.5:1]
-  Legal[Legal scan<br/>per locale]
   Outputs[outputs/:campaign:/:product:/:ratio:/<br/>post.png • hero.png]
   Report[Report writer]
   Runs[runs/:run_id:/report.csv]
   Deliverables[deliverables/*.zip]
 
+  Briefs --> Ingest --> Generator -->|seeded / deterministic| Compositor --> Compliance --> Outputs --> Report --> Runs --> Deliverables
+
+  %% ------- Side branches -------
+  Legal[Legal scan<br/>per locale]
+  Ingest --> Legal --> Report
+
+  %% ------- Providers (stacked) -------
   subgraph Providers
-    direction LR
+    direction TB
     Firefly[Firefly]
     OpenAI[OpenAI]
     Mock[Mock]
   end
-
-  %% -------- Data flows --------
-  Briefs --> Ingest
-  Ingest --> Generator
-  Generator -->|seeded / deterministic| Compositor
   Generator -->|adapter call| Providers
-  Compositor --> Compliance
-  Ingest --> Legal
-  Compliance --> Outputs
-  Outputs --> Report
-  Legal --> Report
-  Report --> Runs
-  Runs --> Deliverables
 
-  %% -------- Control / status (dashed) --------
+  %% ------- Orchestrator control (dashed) -------
+  Orchestrator[Orchestrator]
   Orchestrator -.->|watch inbox & dedupe by campaign_id| Ingest
   Orchestrator -.->|status.json heartbeat| Runs
 
