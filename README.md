@@ -91,21 +91,62 @@ Architecture
 ------------
 ```mermaid
 flowchart LR
-    Briefs[briefs/*.json] --> Ingest
-    Ingest --> Generator
-    Generator --> Compositor
-    Compositor --> Compliance
-    Compliance --> Report
-    Legal --> Report
-    Ingest --> Legal
-    subgraph Providers
-      Firefly
-      OpenAI
-      Mock
-    end
-    Generator --> Providers
-    Orchestrator --> Ingest
-    Orchestrator --> Report
+  %% ---------- Styles ----------
+  classDef node fill:#2b2b2b,stroke:#9aa0a6,color:#fff,rx:6,ry:6
+  classDef store fill:#1f2937,stroke:#9aa0a6,color:#fff,rx:6,ry:6
+  classDef proc  fill:#334155,stroke:#9aa0a6,color:#fff,rx:6,ry:6
+  classDef note  fill:#0f172a,stroke:#64748b,color:#cbd5e1,rx:6,ry:6
+
+  %% ---------- Ingest ----------
+  Briefs[(briefs/*.json\nUTF-8 (no BOM))]:::store
+  Ingest[Ingest\nschema validate]:::proc
+  Orchestrator[Orchestrator]:::proc
+  Briefs --> Ingest
+  Orchestrator -.-> |watch inbox\n& de-dupe by campaign_id| Ingest
+
+  %% ---------- Generation ----------
+  subgraph Generation
+    direction LR
+    Generator[Generator\nprovider adapter]:::proc
+    Compositor[Compositor\nratios (1:1, 9:16, 16:9)\n+ overlay-style]:::proc
+    Generator --> |seeded (deterministic)| Compositor
+  end
+  Ingest --> Generator
+
+  %% ---------- Providers ----------
+  subgraph Providers
+    direction LR
+    Firefly[Firefly]:::node
+    OpenAI[OpenAI]:::node
+    Mock[Mock]:::node
+  end
+  Generator --> |adapter call| Providers
+
+  %% ---------- Quality & Policy ----------
+  Compliance[Brand checks\nlogo area %, palette,\ncontrast ≥ 4.5:1]:::proc
+  Legal[Legal scan\nper locale]:::proc
+  Compositor --> Compliance
+  Ingest --> Legal
+
+  %% ---------- Outputs & Reporting ----------
+  Outputs[/outputs/<campaign>/<product>/<ratio>/\npost.png | hero.png/]:::store
+  Report[Report writer]:::proc
+  Runs[(runs/<run_id>/report.csv)]:::store
+  Deliverables[[deliverables/*.zip]]:::store
+
+  Compliance --> Outputs
+  Outputs --> Report
+  Legal --> Report
+  Report --> Runs
+  Runs --> Deliverables
+
+  %% ---------- Heartbeat / status (control, dashed) ----------
+  Orchestrator -.-> |status.json heartbeat| Runs
+
+  %% ---------- Notes ----------
+  SeedNote[#"Determinism via seed + overlay-style"]:::note
+  SeedNote -.-> Generator
+
 ```
 
 Make targets
