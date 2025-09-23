@@ -91,18 +91,18 @@ Architecture
 ------------
 ```mermaid
 flowchart LR
-  %% ---------- Nodes ----------
-  Briefs[(briefs/*.json<br/>UTF-8 no-BOM)]
+  %% -------- Nodes --------
+  Briefs[briefs/*.json<br/>UTF-8 no-BOM]
   Ingest[Ingest<br/>schema validate]
   Orchestrator[Orchestrator]
   Generator[Generator<br/>provider adapter]
   Compositor[Compositor<br/>ratios 1:1, 9:16, 16:9<br/>overlay-style]
   Compliance[Brand checks<br/>logo area %, palette<br/>contrast ≥ 4.5:1]
   Legal[Legal scan<br/>per locale]
-  Outputs[/outputs/{campaign}/{product}/{ratio}/<br/>post.png • hero.png/]
+  Outputs[outputs/:campaign:/:product:/:ratio:/<br/>post.png • hero.png]
   Report[Report writer]
-  Runs[(runs/{run_id}/report.csv)]
-  Deliverables[[deliverables/*.zip]]
+  Runs[runs/:run_id:/report.csv]
+  Deliverables[deliverables/*.zip]
 
   subgraph Providers
     direction LR
@@ -111,7 +111,7 @@ flowchart LR
     Mock[Mock]
   end
 
-  %% ---------- Data flows ----------
+  %% -------- Data flows --------
   Briefs --> Ingest
   Ingest --> Generator
   Generator -->|seeded / deterministic| Compositor
@@ -124,10 +124,9 @@ flowchart LR
   Report --> Runs
   Runs --> Deliverables
 
-  %% ---------- Control / status (dashed) ----------
+  %% -------- Control / status (dashed) --------
   Orchestrator -.->|watch inbox & dedupe by campaign_id| Ingest
   Orchestrator -.->|status.json heartbeat| Runs
-
 
 ```
 
