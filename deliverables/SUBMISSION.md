@@ -6,7 +6,7 @@
 ## Included here 
 - Slide deck (PDF)
 - Agentic system design + sample stakeholder note (PDF)
-- One‑slide roadmap (PDF)
+- Roadmap (PDF)
 - Architecture (PDF)
 - Walkthrough script (TXT)
 - Stakeholder email (TXT)
