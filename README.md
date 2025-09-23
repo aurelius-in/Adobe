@@ -140,8 +140,3 @@ Assumptions
 -----------
 - If the bundled font or placeholder logo is missing, `make setup` bootstraps them.
 - Firefly and OpenAI adapters degrade sanely when keys/quotas are unavailable.
-
-Screenshots
------------
-Drop a few outputs in `docs/screens/*.png` after a run and link them here later. (yep, TODO but not a blocker)
-
