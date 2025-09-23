@@ -1,7 +1,7 @@
-creative-automation-pipeline
+Creative Automation Pipeline
 ============================
 
-One-line: Generate social creatives from a brief. Uses a local Mock provider by default.
+#### Generates social creatives from a brief. Uses a local Mock provider by default.
 
 Why
 ---
