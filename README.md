@@ -1,6 +1,6 @@
 # Creative Automation Pipeline Explorer (CAPE)
 
-Provider-agnostic pipeline that turns JSON briefs into social creatives, now with an **Explorer Agent** and a simple UI for interactive variant discovery. Ships with a deterministic Mock adapter so you can run locally without keys. Writes compliance metrics and provenance sidecars for every asset.
+Provider-agnostic pipeline that turns JSON briefs into social creatives with an **Explorer Agent** and a UI for interactive variant discovery. Ships with a deterministic Mock adapter so you can run locally without keys. Writes compliance metrics and provenance sidecars for every asset.
 
 ---
 
