@@ -82,6 +82,8 @@ What it does:
 streamlit run app/ui_explorer.py
 ```
 
+Notes field: Add short extra guidance that gets appended to the prompt used by the provider. This is optional and kept separate from your brief so you can iterate quickly.
+
 **UI screens**
 
 * **Controls:** choose seed range, layouts, ratios, and prompt hints

@@ -23,12 +23,19 @@ with st.sidebar:
     brief = st.text_input("Brief path", "briefs/sample_brief.json")
     provider = st.selectbox("Provider", ["auto", "mock"], index=0)
     outdir = st.text_input("Output dir", "outputs")
+    notes = st.text_area("Notes", placeholder="Optional extra guidance", height=80)
 
 seeds = list(range(seed_start, seed_start + seed_count))
 agent = ExplorerAgent()
 
 if st.button("Generate batch"):
     plan = agent.plan(seeds, layouts, ratios)
+    # pass notes via env var used in build_prompt
+    import os
+    if notes:
+        os.environ["CAPE_EXTRA_HINTS"] = notes
+    else:
+        os.environ.pop("CAPE_EXTRA_HINTS", None)
     ctx = AgentContext(plan=plan, runner=lambda **kw: runner(brief=brief, out=outdir, provider=provider, **kw))
     ctx = agent.run(ctx)
     st.session_state["ranked"] = ctx["ranked"]
