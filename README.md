@@ -60,7 +60,24 @@ Adapters are pluggable and optional. The pipeline runs with Mock only.
 * **Mock**: pure Pillow; deterministic; always available
 * **OpenAI Images**: optional when keys are set
 
-**Auto-select behavior:** by default, uses Mock if no external providers are configured. If multiple adapters are enabled, selection order is controlled by your environment config.
+**Auto-select behavior:** defaults to Mock if no external providers are configured. If multiple adapters are enabled, selection order is controlled by your environment config.
+
+### Adapters configuration
+
+| Adapter       | Enable env vars                              | Notes                           |
+| ------------- | -------------------------------------------- | ------------------------------- |
+| Mock          | none                                         | Default, offline, deterministic |
+| OpenAI Images | `OPENAI_API_KEY`, optional `OPENAI_BASE_URL` | Uses current Images API         |
+
+`.env.example`
+
+```dotenv
+# Mock requires no keys
+# Enable OpenAI by setting your key
+OPENAI_API_KEY=
+# Optional for self-hosted gateways
+# OPENAI_BASE_URL=https://api.openai.com/v1
+```
 
 ## Brief schema (short)
 
@@ -70,7 +87,7 @@ Required:
 * `locales`, `aspect_ratios`
 * `message[locale]`, `call_to_action[locale]`
 * `brand_palette.primary_hex`
-* `products[]` with `id`, `name`, optional `prompt_hints` and `base_asset`
+* `products[]` with `id`, `name`, optional `prompt_hints`, `base_asset`
 
 See `briefs/sample_brief.json` for a full example.
 
