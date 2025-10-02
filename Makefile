@@ -2,7 +2,7 @@ PYTHON=python
 PIP=pip
 VENV=.venv
 
-.PHONY: setup fmt lint test run-sample ui precommit-install
+.PHONY: setup fmt lint test run-sample ui precommit-install ui-explorer explore-sample
 
 setup:
 	@if not exist $(VENV) ( $(PYTHON) -m venv $(VENV) )
@@ -25,6 +25,12 @@ run-sample:
 
 ui:
 	@"$(VENV)\\Scripts\\streamlit" run app/ui.py
+
+ui-explorer:
+	@"$(VENV)\\Scripts\\streamlit" run app/ui_explorer.py
+
+explore-sample:
+	@"$(VENV)\\Scripts\\python" -m app.main generate --brief briefs/sample_brief.json --out outputs --provider auto --ratios 1:1,9:16,16:9 --locales en-US --max-variants 1 --seed 1234 --overlay-style banner --log-json
 
 precommit-install:
 	@"$(VENV)\\Scripts\\pre-commit" install
