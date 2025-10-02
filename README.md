@@ -1,8 +1,18 @@
-# Creative Automation Pipeline
-Generates social creatives from a JSON brief. Provider-agnostic with a local Mock adapter by default. Includes ratio-aware rendering, compliance checks, and provenance sidecars.
+# Creative Automation Pipeline Explorer (CAPE)
 
-## Why
-Turn a campaign brief into on-brand assets across common ratios. The pipeline selects whatever providers you enable and writes simple reports so you can review what happened and reproduce runs.
+Provider-agnostic pipeline that turns JSON briefs into social creatives, now with an **Explorer Agent** and a simple UI for interactive variant discovery. Ships with a deterministic Mock adapter so you can run locally without keys. Writes compliance metrics and provenance sidecars for every asset.
+
+---
+
+## Why CAPE
+CAPE makes creative automation **interactive**. Instead of a one-shot render, you can **explore** seeds, ratios, layouts, and prompt hints, then **rank, compare, and select** winners with transparent scoring.
+
+- JSON brief in, on-brand assets out  
+- Deterministic local runs for audits and reproducibility  
+- Explorer Agent plans and runs variant sweeps, then ranks results  
+- Provenance sidecars record adapter, seed, and hashes
+
+---
 
 ## Quick start
 1) Python 3.11
@@ -12,11 +22,13 @@ Turn a campaign brief into on-brand assets across common ratios. The pipeline se
 make setup
 ````
 
-3. Run sample (no API keys)
+3. Run a sample with no API keys (Mock only)
 
 ```bash
 make run-sample
 ```
+
+---
 
 ## CLI
 
@@ -41,26 +53,48 @@ Run with Mock explicitly:
 python -m app.main generate --brief briefs/sample_brief.json --provider mock
 ```
 
-## Orchestrator
+Orchestrator loop (single pass):
 
 ```bash
 python -m app.main orchestrate --iterations 1
 ```
 
-## UI (optional)
+---
+
+## Explorer Agent (the “E” in CAPE)
+
+The Explorer Agent searches the design space and helps you pick winners.
+
+What it does:
+
+* Plans a grid of variants across **seeds**, **layouts**, and **ratios**
+* Executes batches through your provider adapter
+* Scores results using **contrast**, **text fit**, and **logo area** heuristics
+* Serves an interactive UI to **filter, compare, star, and export** top picks
+
+### Run the Explorer UI
 
 ```bash
-streamlit run app/ui.py
+streamlit run app/ui_explorer.py
 ```
+
+**UI screens**
+
+* **Controls:** choose seed range, layouts, ratios, and prompt hints
+* **Explorer Grid:** masonry of variants with score chips and quick actions
+* **Compare:** side-by-side with metric breakdowns and provenance
+* **Winners:** export selected assets with a manifest of scores and reasons
+
+---
 
 ## Providers
 
 Adapters are pluggable and optional. The pipeline runs with Mock only.
 
-* **Mock**: pure Pillow; deterministic; always available
+* **Mock**: pure Pillow, deterministic, always available
 * **OpenAI Images**: optional when keys are set
 
-**Auto-select behavior:** defaults to Mock if no external providers are configured. If multiple adapters are enabled, selection order is controlled by your environment config.
+Auto-select defaults to Mock if no external providers are configured. If multiple adapters are enabled, selection order is controlled by env config.
 
 ### Adapters configuration
 
@@ -79,6 +113,8 @@ OPENAI_API_KEY=
 # OPENAI_BASE_URL=https://api.openai.com/v1
 ```
 
+---
+
 ## Brief schema (short)
 
 Required:
@@ -91,25 +127,31 @@ Required:
 
 See `briefs/sample_brief.json` for a full example.
 
+---
+
 ## Outputs
 
 * `outputs/<campaign>/<product>/<ratio>/{hero.png, post.png, *.prov.json}`
-* `runs/<timestamp>/{run.log,report.json,report.csv}`
+* `runs/<timestamp>/{run.log,report.json,report.csv,variant_rank.json,audit.json}`
 
-## Composition
+**Provenance sidecar** `{image}.prov.json` includes adapter, seed, version, and SHA-256 of the image file.
+
+---
+
+## Composition rules
 
 * Ratios: 1:1 (1024×1024), 9:16 (1080×1920), 16:9 (1920×1080)
-* Fit hero with cover or contain without distortion. Add padding when needed
-* Overlay message and CTA with bundled font. Line wrap with safe margins
-* Logo bottom right with margin. Target 3–6% of canvas area
+* Fit hero with cover or contain without distortion; add padding as needed
+* Overlay message and CTA with bundled font; line wrap with safe margins
+* Logo bottom right with margin; target 3–6% of canvas area
 * Text contrast aims for WCAG AA ≥ 4.5:1
-* Provenance sidecar `{image}.prov.json`
+
+---
 
 ## Architecture
 
 ```mermaid
 flowchart TB
-  %% ------- Main flow (top -> bottom) -------
   Briefs[briefs/*.json<br/>UTF-8 no-BOM]
   Ingest[Ingest<br/>schema validate]
   Generator[Generator<br/>provider adapter]
@@ -122,11 +164,7 @@ flowchart TB
 
   Briefs --> Ingest --> Generator -->|seeded / deterministic| Compositor --> Compliance --> Outputs --> Report --> Runs --> Deliverables
 
-  %% ------- Side branches -------
-  Legal[Legal scan<br/>per locale]
-  Ingest --> Legal --> Report
-
-  %% ------- Providers (stacked) -------
+  %% Providers
   subgraph Providers
     direction TB
     Mock[Mock]
@@ -134,11 +172,14 @@ flowchart TB
   end
   Generator -->|adapter call| Providers
 
-  %% ------- Orchestrator control (dashed) -------
+  %% Orchestrator and Explorer
   Orchestrator[Orchestrator]
+  Explorer[Explorer Agent<br/>plan • execute • score]
   Orchestrator -.->|watch inbox and dedupe by campaign_id| Ingest
-  Orchestrator -.->|status.json heartbeat| Runs
+  Explorer -.->|variant plan and scoring| Runs
 ```
+
+---
 
 ## Make targets
 
@@ -148,18 +189,39 @@ flowchart TB
 * `test`: pytest -q
 * `run-sample`: generate creatives with the Mock adapter
 
+---
+
+## Tests
+
+Minimal tests to include:
+
+* **Contrast:** assets with dark overlay should pass AA
+* **Logo area:** 3–6% target window
+* **Determinism:** same seed and brief produce the same file hash with Mock
+* **Explorer ranking:** higher metric sum sorts first
+
+Example test outline:
+
+```python
+def test_mock_determinism(tmp_path):
+    # run generate twice with same seed, compare SHA-256
+    ...
+
+def test_logo_area_bounds():
+    # feed known composition, assert pct between 3% and 6%
+    ...
+```
+
+---
+
 ## Environment
 
 Copy `.env.example` to `.env`. Set keys only if you want external providers. The app runs without keys using Mock.
 
-## Assumptions
+---
 
-* If the bundled font or placeholder logo is missing, `make setup` bootstraps them
-* External adapters degrade cleanly when keys or quotas are unavailable
+## Roadmap
 
-## Deliverables
-
-* [Architecture.pdf](deliverables/Architecture.pdf)
-* [Roadmap.pdf](deliverables/Roadmap.pdf)
-* [SUBMISSION.md](deliverables/SUBMISSION.md)
-* [Stakeholder_Email.txt](deliverables/Stakeholder_Email.txt)
+* Add AltTextAgent for ADA descriptions per asset
+* Add LocalizationQAAgent for back-translation checks
+* Add ChannelPackagerAgent for platform-ready naming and manifests
