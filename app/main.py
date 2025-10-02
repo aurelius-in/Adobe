@@ -120,6 +120,15 @@ def orchestrate(
     orch.start(max_iterations=iterations)
 
 
+@app.command()
+def explore() -> None:
+    """Launch the CAPE Explorer UI (Streamlit)."""
+    import subprocess
+    import sys
+
+    subprocess.run([sys.executable, "-m", "streamlit", "run", "app/ui_explorer.py"], check=True)
+
+
 def main() -> None:
     app()
 

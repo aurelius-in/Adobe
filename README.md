@@ -1,5 +1,9 @@
 # Creative Automation Pipeline Explorer (CAPE)
 
+<p align="left">
+  <img src="cape_logo.png" alt="CAPE Logo" width="200" />
+</p>
+
 Provider-agnostic pipeline that turns JSON briefs into social creatives with an **Explorer Agent** and a UI for interactive variant discovery. Ships with a deterministic Mock adapter so you can run locally without keys. Writes compliance metrics and provenance sidecars for every asset.
 
 ---
@@ -133,6 +137,15 @@ See `briefs/sample_brief.json` for a full example.
 
 * `outputs/<campaign>/<product>/<ratio>/{hero.png, post.png, *.prov.json}`
 * `runs/<timestamp>/{run.log,report.json,report.csv,variant_rank.json,audit.json}`
+### Explorer quickstart
+```bash
+make ui-explorer
+# or
+streamlit run app/ui_explorer.py
+```
+
+Tip: The UI shells into the existing CLI for each variant, so Mock runs work offline and external adapters (like OpenAI Images) work when keys are set via `.env`.
+
 
 **Provenance sidecar** `{image}.prov.json` includes adapter, seed, version, and SHA-256 of the image file.
 
