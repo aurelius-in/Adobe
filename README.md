@@ -59,7 +59,6 @@ Adapters are pluggable and optional. The pipeline runs with Mock only.
 
 * **Mock**: pure Pillow; deterministic; always available
 * **OpenAI Images**: optional when keys are set
-* **Firefly**: optional when keys are set
 
 **Auto-select behavior:** by default, uses Mock if no external providers are configured. If multiple adapters are enabled, selection order is controlled by your environment config.
 
@@ -115,7 +114,6 @@ flowchart TB
     direction TB
     Mock[Mock]
     OpenAI[OpenAI Images]
-    Firefly[Firefly]
   end
   Generator -->|adapter call| Providers
 
