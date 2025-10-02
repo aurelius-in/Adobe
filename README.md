@@ -157,15 +157,9 @@ Copy `.env.example` to `.env`. Set keys only if you want external providers. The
 * If the bundled font or placeholder logo is missing, `make setup` bootstraps them
 * External adapters degrade cleanly when keys or quotas are unavailable
 
-## Demo video
-
-* Stream (primary): [YouTube](https://youtu.be/NcWngSWhqUw)
-* Stream (backup): [Filmora](https://app.filmora.io/#/object/d39bdckp7c8q5b1qe4rg)
-
 ## Deliverables
 
 * [Architecture.pdf](deliverables/Architecture.pdf)
 * [Roadmap.pdf](deliverables/Roadmap.pdf)
 * [SUBMISSION.md](deliverables/SUBMISSION.md)
 * [Stakeholder_Email.txt](deliverables/Stakeholder_Email.txt)
-* [Walkthrough_Script.txt](deliverables/Walkthrough_Script.txt)
