@@ -8,11 +8,10 @@ from app.explorer_runner import runner
 
 
 st.set_page_config(page_title="CAPE Explorer", layout="wide")
-# Logo (if present) and title
+# Logo (if present)
 _LOGO_PATH = (pathlib.Path(__file__).resolve().parent.parent / "cape_logo.png")
 if _LOGO_PATH.exists():
     st.image(str(_LOGO_PATH), width=160)
-st.title("CAPE Explorer")
 
 # Controls
 with st.sidebar:
