@@ -1,4 +1,4 @@
-# Creative Automation Pipeline Explorer (CAPE)
+# Creative Automation Pipeline Explorer
 
 <p align="left">
   <img src="cape_logo.png" alt="CAPE Logo" width="200" />
