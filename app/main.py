@@ -46,6 +46,11 @@ def generate(
     The pipeline will auto-select a provider and produce outputs+reports.
     """
     # Defer heavy imports to allow CLI help to be snappy
+    try:
+        from dotenv import load_dotenv  # type: ignore
+        load_dotenv()
+    except Exception:
+        pass
     from app.pipeline.ingest import load_brief_and_rules
     from app.pipeline.generator import select_provider
     from app.pipeline.report import RunContext, RunReporter

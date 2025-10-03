@@ -1,0 +1,22 @@
+# Local environment and secrets
+.env
+brand/brand_rules.local.yaml
+
+# Runs and generated outputs
+runs/
+outputs/
+
+# Virtual envs and caches
+.venv/
+__pycache__/
+*.pyc
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+

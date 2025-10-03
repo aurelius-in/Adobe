@@ -88,30 +88,47 @@ def runner(
     layout: str = "banner",
     ratio: str = "1:1",
 ) -> Dict[str, Any]:
-    cmd = [
-        "python",
-        "-m",
-        "app.main",
-        "generate",
-        "--brief",
-        brief,
-        "--out",
-        out,
-        "--provider",
-        provider,
-        "--ratios",
-        ratio,
-        "--locales",
-        "en-US",
-        "--max-variants",
-        "1",
-        "--seed",
-        str(seed),
-        "--overlay-style",
-        layout,
-        "--log-json",
-    ]
-    subprocess.run(cmd, check=True)
+    # Prefer in-process call to avoid shell/Click parsing issues on Windows
+    try:
+        import app.main as cli_main  # type: ignore
+
+        cli_main.generate(
+            brief=brief,
+            out=out,
+            provider=provider,
+            ratios=ratio,
+            locales="en-US",
+            max_variants=1,
+            seed=seed,
+            overlay_style=layout,
+            log_json=True,
+        )
+    except Exception:
+        # Fallback to subprocess if direct call fails unexpectedly
+        cmd = [
+            "python",
+            "-m",
+            "app.main",
+            "generate",
+            "--brief",
+            brief,
+            "--out",
+            out,
+            "--provider",
+            provider,
+            "--ratios",
+            ratio,
+            "--locales",
+            "en-US",
+            "--max-variants",
+            "1",
+            "--seed",
+            str(seed),
+            "--overlay-style",
+            layout,
+            "--log-json",
+        ]
+        subprocess.run(cmd, check=True)
     # give filesystem a moment and then pull latest artifact
     time.sleep(0.2)
     metrics_by_path = _read_metrics_from_report()

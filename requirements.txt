@@ -14,3 +14,4 @@ pre-commit==3.8.0
 
 
 pyyaml
+openai>=1.30.0
