@@ -106,6 +106,19 @@ def _draw_text_block(
         line_y += line_h + 8
 
 
+def _measure_text_block(canvas: Image.Image, text_lines: List[str], font: ImageFont.FreeTypeFont) -> Tuple[int, int, List[int]]:
+    draw = ImageDraw.Draw(canvas)
+    widths: List[int] = []
+    heights: List[int] = []
+    for line in text_lines:
+        bbox = draw.textbbox((0, 0), line, font=font)
+        widths.append(bbox[2] - bbox[0])
+        heights.append(bbox[3] - bbox[1])
+    text_w = max(widths) if widths else 0
+    text_h = sum(heights) + (len(text_lines) - 1) * 8
+    return text_w, text_h, heights
+
+
 def compose_variants(
     brief: Brief,
     brand_rules: Dict,
@@ -145,12 +158,45 @@ def compose_variants(
 
                     # Compose post by adding overlays and logo
                     post = hero.copy().convert("RGBA")
-                    # TODO: support overlay_style "bottom-strip" and "center-card" with simple shapes
                     lines = [
                         brief.message.get(loc) or next(iter(brief.message.values())),
                         f"{brief.call_to_action.get(loc) or next(iter(brief.call_to_action.values()))}",
                     ]
-                    _draw_text_block(post, lines, font, min_contrast=min_contrast)
+                    if overlay_style == "bottom-strip":
+                        # Semi-transparent strip across the bottom with white text
+                        padding = 24
+                        text_w, text_h, heights = _measure_text_block(post, lines, font)
+                        strip_h = text_h + 2 * padding
+                        draw = ImageDraw.Draw(post, "RGBA")
+                        draw.rectangle((0, post.height - strip_h, post.width, post.height), fill=(0, 0, 0, 180))
+                        text_x = padding
+                        line_y = post.height - strip_h + padding
+                        for i, line in enumerate(lines):
+                            draw.text((text_x, line_y), line, fill=(255, 255, 255), font=font)
+                            line_h = heights[i] if i < len(heights) else 32
+                            line_y += line_h + 8
+                    elif overlay_style == "center-card":
+                        # Rounded card centered with white text
+                        padding = 24
+                        text_w, text_h, heights = _measure_text_block(post, lines, font)
+                        card_w = min(post.width - 2 * padding, text_w + 2 * padding + 24)
+                        card_h = text_h + 2 * padding
+                        x = (post.width - card_w) // 2
+                        y = (post.height - card_h) // 2
+                        draw = ImageDraw.Draw(post, "RGBA")
+                        try:
+                            draw.rounded_rectangle((x, y, x + card_w, y + card_h), radius=16, fill=(0, 0, 0, 180))
+                        except Exception:
+                            draw.rectangle((x, y, x + card_w, y + card_h), fill=(0, 0, 0, 180))
+                        text_x = x + padding
+                        line_y = y + padding
+                        for i, line in enumerate(lines):
+                            draw.text((text_x, line_y), line, fill=(255, 255, 255), font=font)
+                            line_h = heights[i] if i < len(heights) else 32
+                            line_y += line_h + 8
+                    else:
+                        # Default banner-style that adapts to contrast
+                        _draw_text_block(post, lines, font, min_contrast=min_contrast)
 
                     area_pct = (brand_rules.get("brand", {}).get("logo_area_pct_min", 3)
                                 + brand_rules.get("brand", {}).get("logo_area_pct_max", 6)) / 2

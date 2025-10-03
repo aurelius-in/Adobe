@@ -8,18 +8,17 @@ from app.explorer_runner import runner
 
 
 st.set_page_config(page_title="CAPE Explorer", layout="wide")
-# Logo (if present) and title
+# Logo (if present)
 _LOGO_PATH = (pathlib.Path(__file__).resolve().parent.parent / "cape_logo.png")
 if _LOGO_PATH.exists():
     st.image(str(_LOGO_PATH), width=160)
-st.title("CAPE Explorer")
 
 # Controls
 with st.sidebar:
     st.header("Controls")
     seed_start = st.number_input("Seed start", min_value=1, max_value=999999, value=1234, step=1)
     seed_count = st.slider("Seed count", 1, 12, 6)
-    layouts = st.multiselect("Layouts", ["banner", "badge", "stacked"], default=["banner", "badge"])
+    layouts = st.multiselect("Layouts", ["banner", "bottom-strip", "center-card"], default=["banner", "bottom-strip", "center-card"])
     ratios = st.multiselect("Ratios", ["1:1", "9:16", "16:9"], default=["1:1", "9:16", "16:9"])
     brief = st.text_input("Brief path", "briefs/sample_brief.json")
     provider = st.selectbox("Provider", ["auto", "mock"], index=0)
