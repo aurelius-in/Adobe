@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
@@ -132,8 +133,14 @@ def compose_variants(
     overlay_style: str = "banner",
 ) -> None:
     font_path = brand_rules.get("overlay", {}).get("text_font", "assets/fonts/NotoSans-Regular.ttf")
+    # Allow UI to control font size via env; clamp to sane bounds
     try:
-        font = ImageFont.truetype(font_path, 48)
+        env_size = int(os.getenv("CAPE_OVERLAY_FONT_SIZE", "48"))
+        font_size = max(12, min(400, env_size))
+    except Exception:
+        font_size = 48
+    try:
+        font = ImageFont.truetype(font_path, font_size)
     except Exception:
         font = ImageFont.load_default()
     logo_path = brand_rules.get("brand", {}).get("logo_path", "assets/logos/brand_logo.png")
@@ -158,10 +165,12 @@ def compose_variants(
 
                     # Compose post by adding overlays and logo
                     post = hero.copy().convert("RGBA")
-                    lines = [
-                        brief.message.get(loc) or next(iter(brief.message.values())),
-                        f"{brief.call_to_action.get(loc) or next(iter(brief.call_to_action.values()))}",
-                    ]
+                    # Allow UI overrides for headline/CTA via env
+                    headline_override = os.getenv("CAPE_UI_HEADLINE")
+                    cta_override = os.getenv("CAPE_UI_CTA")
+                    headline = headline_override or (brief.message.get(loc) or next(iter(brief.message.values())))
+                    cta_text = cta_override or (brief.call_to_action.get(loc) or next(iter(brief.call_to_action.values())))
+                    lines = [headline, f"{cta_text}"]
                     if overlay_style == "bottom-strip":
                         # Semi-transparent strip across the bottom with white text
                         padding = 24

@@ -42,7 +42,13 @@ def select_provider(name: str) -> BaseProvider:
 def build_prompt(brief: Brief, product: Product, locale: str) -> str:
     msg = brief.message.get(locale) or next(iter(brief.message.values()))
     hints = product.prompt_hints or ""
+    extra = os.getenv("CAPE_EXTRA_HINTS", "")
     # tiny nit: punctuation here can look a bit off in some langs, ok for now
-    return f"{brief.brand} {product.name}: {msg}. {hints}".strip()
+    parts = [f"{brief.brand} {product.name}: {msg}".strip()]
+    if hints:
+        parts.append(hints)
+    if extra:
+        parts.append(extra)
+    return ". ".join(p.strip() for p in parts if p.strip())
 
 
